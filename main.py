@@ -18,7 +18,6 @@ def get_weather(city):
                 response = requests.get(url)
                 if response.status_code == 200:
                     data = response.json()
-                    print(data)
                     return data
             except:
                 return None
