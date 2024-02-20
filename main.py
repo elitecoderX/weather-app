@@ -1,4 +1,7 @@
+from flask import Flask, render_template, request
 import requests
+
+app = Flask(__name__)
 
 def get_weather(city):
     city = city.capitalize()
@@ -15,15 +18,20 @@ def get_weather(city):
                 response = requests.get(url)
                 if response.status_code == 200:
                     data = response.json()
-                    metrics = data["current"]
-                    units = data["current_units"]
-                    for unit in units.keys():
-                         print(unit,':',metrics[unit],units[unit])
+                    print(data)
+                    return data
             except:
-                print("Unable to retrieve weather information.")
+                return None
     except:
-            print("Unable to get data for this city.")
+        return None
 
-if __name__ == "__main__":
-    city = input("Enter city: ")
-    get_weather(city)
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    data = None
+    if request.method == 'POST':
+        city = request.form.get('city')
+        data = get_weather(city)
+    return render_template('index.html', data=data)
+
+if __name__ == '__main__':
+    app.run(debug=True)
